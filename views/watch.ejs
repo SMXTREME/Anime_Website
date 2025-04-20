@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title><%= title %>:Episode <%= episodeNo %> - AniXTREME</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: 'Arial', sans-serif;
+            }
+
+            body {
+                background-color: #0f1016;
+                color: #fff;
+            }
+
+            a {
+                text-decoration: none;
+                color: inherit;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+
+            /* Header Styles */
+            header {
+                background-color: #161921;
+                padding: 15px 0;
+                position: sticky;
+                top: 0;
+                z-index: 100;
+            }
+
+            .header-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .logo {
+                color: #5abee0;
+                font-size: 24px;
+                font-weight: bold;
+            }
+
+            .search-bar {
+                display: flex;
+                background-color: #1a1d27;
+                border-radius: 20px;
+                overflow: hidden;
+                width: 250px;
+            }
+
+            .search-bar input {
+                width: 100%;
+                padding: 8px 15px;
+                border: none;
+                background-color: transparent;
+                color: #fff;
+                outline: none;
+            }
+
+            .search-bar button {
+                background-color: #5abee0;
+                border: none;
+                color: #161921;
+                padding: 8px 15px;
+                cursor: pointer;
+            }
+
+            /* Video Player Section */
+            .video-section {
+                margin-top: 20px;
+            }
+
+            .video-title {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+
+            .video-container {
+                width: 100%;
+                background-color: #000;
+                position: relative;
+                padding-top: 56.25%; /* 16:9 Aspect Ratio */
+                border-radius: 10px;
+                overflow: hidden;
+            }
+
+            #video-player {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+            .video-placeholder {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: #fff;
+                background-color: #0a0a0f;
+            }
+
+            .play-icon {
+                font-size: 50px;
+                margin-bottom: 10px;
+            }
+
+            /* Server Controls */
+            .server-controls {
+                margin-top: 15px;
+            }
+
+            .language-servers {
+                margin-bottom: 15px;
+                background-color: #161921;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            .language-label {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 15px;
+                background-color: #1e2130;
+                font-weight: bold;
+            }
+
+            .language-icon {
+                color: #5abee0;
+            }
+
+            .server-buttons {
+                display: flex;
+                padding: 10px 15px;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .server-btn {
+                background-color: #2a2e3d;
+                color: #e0e0e0;
+                padding: 8px 15px;
+                border-radius: 4px;
+                cursor: pointer;
+                border: 1px solid transparent;
+                transition: all 0.2s;
+            }
+
+            .server-btn.active {
+                background-color: #ff8ecc;
+                color: #161921;
+                font-weight: bold;
+            }
+
+            /* Episode Navigation */
+            .episode-navigation {
+                margin-top: 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-controls {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+
+            .range-selector {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .range-label {
+                font-size: 14px;
+                color: #e0e0e0;
+            }
+
+            .range-dropdown {
+                background-color: #1a1d27;
+                color: #fff;
+                border: 1px solid #2a2e3d;
+                padding: 5px 10px;
+                border-radius: 4px;
+                cursor: pointer;
+                outline: none;
+            }
+
+            .range-dropdown option {
+                background-color: #1a1d27;
+                color: #fff;
+            }
+
+            .nav-buttons {
+                display: flex;
+                gap: 15px;
+            }
+
+            .nav-btn {
+                padding: 8px 15px;
+                background-color: #1a1d27;
+                color: #fff;
+                border-radius: 4px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                transition: background-color 0.3s;
+            }
+
+            .nav-btn:hover {
+                background-color: #242735;
+            }
+
+            .nav-btn.disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .episodes-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                padding: 15px;
+                background-color: #161921;
+                border-radius: 8px;
+                max-height: 220px;
+                overflow-y: auto;
+            }
+
+            .episode-item {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #1a1d27;
+                color: #e0e0e0;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.3s;
+            }
+
+            .episode-item:hover {
+                background-color: #242735;
+            }
+
+            .episode-item.active {
+                background-color: #5abee0;
+                color: #161921;
+                font-weight: bold;
+            }
+
+            .episode-item.filler {
+                background-color: #5eff7b;
+                color: #161921;
+                font-weight: bold;
+            }
+
+            .no-episodes {
+                width: 100%;
+                text-align: center;
+                padding: 20px 0;
+                color: #8f8f8f;
+                font-style: italic;
+            }
+
+            /* Footer */
+            footer {
+                margin-top: 60px;
+                background-color: #161921;
+                padding: 30px 0;
+                color: #e0e0e0;
+                font-size: 14px;
+                text-align: center;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .nav-controls {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 15px;
+                }
+
+                .nav-buttons {
+                    width: 100%;
+                    justify-content: space-between;
+                }
+
+                .range-selector {
+                    width: 100%;
+                    justify-content: space-between;
+                }
+
+                .episode-item {
+                    width: 35px;
+                    height: 35px;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .video-title {
+                    font-size: 20px;
+                }
+
+                .episodes-list {
+                    gap: 8px;
+                }
+
+                .episode-item {
+                    width: 30px;
+                    height: 30px;
+                    font-size: 12px;
+                }
+
+                .server-buttons {
+                    flex-direction: column;
+                }
+
+                .server-btn {
+                    text-align: center;
+                }
+            }
+
+            /* Custom Scrollbar */
+            .episodes-list::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .episodes-list::-webkit-scrollbar-track {
+                background: #1a1d27;
+                border-radius: 4px;
+            }
+
+            .episodes-list::-webkit-scrollbar-thumb {
+                background: #5abee0;
+                border-radius: 4px;
+            }
+
+            .episodes-list::-webkit-scrollbar-thumb:hover {
+                background: #4590ad;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="container header-container">
+                <div class="logo"><a href="/">ANIXTREME</a></div>
+                <div class="search-bar">
+                    <input id="search-bar-data" type="text" placeholder="Search anime..." />
+                    <button id="search-bar-button">Search</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="container">
+            <section class="video-section">
+                <h1 class="video-title" id="title"><%= title %> - Episode <%= episodeNo %></h1>
+
+                <div class="video-container">
+                    <!-- Video player with HLS support -->
+                    <video id="video-player" controls crossorigin></video>
+                </div>
+
+                <div class="server-controls">
+                    <!-- sub server -->
+                    <% if (sub.length !== 0) { %>
+                    <div class="language-servers">
+                        <div class="language-label"><span class="language-icon">🌐</span> sub:</div>
+                        <div class="server-buttons">
+                            <% sub.forEach(data => { %>
+                            <a
+                                href="/watch/<%= epsId %>&server=<%= data.serverName %>&type=sub"
+                                class="server-btn <% if (server === data.serverName && type === 'sub') { %> active <% } %>"
+                                id="sub-<%= data.serverName %>"
+                                ><%= data.serverName %></a
+                            >
+                            <% }) %>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- dub server -->
+                    <% if (dub.length !== 0) { %>
+                    <div class="language-servers">
+                        <div class="language-label"><span class="language-icon">🎤</span> DUB:</div>
+                        <div class="server-buttons">
+                            <% dub.forEach(data => { %>
+                            <a
+                                href="/watch/<%= epsId %>&server=<%= data.serverName %>&type=dub"
+                                class="server-btn <% if (server === data.serverName && type === 'dub') { %> active <% } %>"
+                                id="dub-<%= data.serverName %>"
+                                ><%= data.serverName %></a
+                            >
+                            <% }) %>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Raw -->
+                    <% if (raw.length !== 0) { %>
+                    <div class="language-servers">
+                        <div class="language-label"><span class="language-icon">🎤</span> raw:</div>
+                        <div class="server-buttons">
+                            <% raw.forEach(data => { %>
+                            <a
+                                href="/watch/<%= epsId %>&server=<%= data.serverName %>&type=raw"
+                                class="server-btn <% if (server === data.serverName && type === 'raw') { %> active <% } %>"
+                                id="raw-<%= data.serverName %>"
+                                ><%= data.serverName %></a
+                            >
+                            <% }) %>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+
+                <div class="episode-navigation">
+                    <div class="nav-controls">
+                        <div class="range-selector">
+                            <span class="range-label">Episode Range:</span>
+                            <select class="range-dropdown" id="episode-range">
+                                <option value="1-100">1-100</option>
+                                <option value="101-200">101-200</option>
+                                <option value="201-300">201-300</option>
+                                <option value="301-400">301-400</option>
+                                <option value="401-500">401-500</option>
+                            </select>
+                        </div>
+
+                        <div class="nav-buttons">
+                            <a class="nav-btn disabled" id="prev-episode">
+                                <span>←</span> Previous
+                            </a>
+                            <a class="nav-btn" id="next-episode">Next <span>→</span></a>
+                        </div>
+                    </div>
+
+                    <div class="episodes-list" id="episodes-container">
+                        <!-- Episodes will be generated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>ANIXTREME, Made with ❤️ by SMXTREME</footer>
+
+        <!-- Include HLS.js for HTTP Live Streaming support -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.10/hls.min.js"></script>
+
+        <script>
+            // HLS Video Player Setup
+            document.addEventListener('DOMContentLoaded', function () {
+                const video = document.getElementById('video-player');
+
+                // Sample HLS stream URL (placeholder)
+                const videoSrc = `<%= sources %>`;
+
+                // Check if HLS is supported in the browser
+                if (Hls.isSupported()) {
+                    const hls = new Hls();
+                    hls.loadSource(videoSrc);
+                    hls.attachMedia(video);
+                    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                        video.play();
+                    });
+                }
+                // For browsers that natively support HLS (like Safari)
+                else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = videoSrc;
+                    video.addEventListener('loadedmetadata', function () {
+                        video.play();
+                    });
+                }
+            });
+
+            let episodeNo = `<%= episodeNo %>`;
+            episodeNo = parseInt(episodeNo) || 1;
+
+            let totalEpisodes = `<%= totalEpisodes %>`;
+            totalEpisodes = parseInt(totalEpisodes) || 1000;
+
+            let episodes = <%- JSON.stringify(episodes) %> || [];
+
+            const searchParams = new URLSearchParams(window.location.search);
+            const server = searchParams.get('server') || false;
+            const type = searchParams.get('type') || false;
+
+            const animeConfig = {
+                totalEpisodes, // Total number of episodes in this anime
+            };
+
+            // Generate episodes based on selected range and respect total episodes
+            function generateEpisodes(start, end) {
+                const prevButton = document.getElementById('prev-episode');
+                const nextButton = document.getElementById('next-episode');
+                const container = document.getElementById('episodes-container');
+                container.innerHTML = ''; // Clear existing episodes
+
+                // Adjust the end of the range based on total episodes
+                end = Math.min(end, animeConfig.totalEpisodes);
+
+                // If start is greater than total episodes, show "no episodes" message
+                if (start > animeConfig.totalEpisodes) {
+                    const noEpisodesMessage = document.createElement('div');
+                    noEpisodesMessage.className = 'no-episodes';
+                    noEpisodesMessage.textContent = 'No episodes available in this range';
+                    container.appendChild(noEpisodesMessage);
+                    return;
+                }
+
+                // Generate available episodes
+                for (let i = start; i <= end; i++) {
+                    const episodeId = episodes[i - 1].episodeId;
+                    let special = '';
+                    if (episodes[i - 1].number === episodeNo && episodes[i - 1].isFiller) {
+                        special = ' active';
+                    } else {
+                        if (episodes[i - 1].number === episodeNo) {
+                            special = ' active';
+                        }
+                        if (episodes[i - 1].isFiller) {
+                            special = ' filler';
+                        }
+                    }
+
+                    if (episodes[i - 1].number === episodeNo) {
+                        if (i - 1 !== 0)
+                            prevButton.href = `/watch/${episodes[i - 2].episodeId}${
+                                server ? `&server=${server}` : ''
+                            }${type ? `&type=${type}` : ''}`;
+                        if (i - 1 !== animeConfig.totalEpisodes)
+                            nextButton.href = `/watch/${episodes[i].episodeId}${
+                                server ? `&server=${server}` : ''
+                            }${type ? `&type=${type}` : ''}`;
+                    }
+
+                    const text = `<a class="episode-item${special}" href="/watch/${episodeId}${
+                        server ? `&server=${server}` : ''
+                    }${type ? `&type=${type}` : ''}">${i}</a>`;
+
+                    container.innerHTML += text;
+                }
+            }
+
+            // Change to a specific episode
+            function changeEpisode(episodeNum) {
+                // Don't proceed if episode number is invalid
+                if (episodeNum < 1 || episodeNum > animeConfig.totalEpisodes) return;
+
+                // Update active episode indicator
+                document.querySelectorAll('.episode-item').forEach((ep) => {
+                    ep.classList.remove('active');
+                    if (parseInt(ep.textContent) === episodeNum) {
+                        ep.classList.add('active');
+                    }
+                });
+
+                // Update navigation buttons
+                updateNavigationButtons(episodeNum);
+            }
+
+            // Update navigation buttons (enable/disable)
+            function updateNavigationButtons(currentEpisode) {
+                const prevButton = document.getElementById('prev-episode');
+                const nextButton = document.getElementById('next-episode');
+
+                // Disable previous button if on episode 1
+                if (currentEpisode <= 1) {
+                    prevButton.classList.add('disabled');
+                } else {
+                    prevButton.classList.remove('disabled');
+                }
+
+                // Disable next button if on last episode
+                if (currentEpisode >= animeConfig.totalEpisodes) {
+                    nextButton.classList.add('disabled');
+                } else {
+                    nextButton.classList.remove('disabled');
+                }
+            }
+
+            // Calculate and set appropriate range in the dropdown
+            function setAppropriateRange(episodeNum) {
+                const range = document.getElementById('episode-range');
+                const options = range.options;
+                range.innerHTML = ''; // Clear existing options
+
+                // Calculate number of ranges needed
+                const rangeSize = 100;
+                const numRanges = Math.ceil(animeConfig.totalEpisodes / rangeSize);
+
+                // Create options for each range
+                for (let i = 0; i < numRanges; i++) {
+                    const start = i * rangeSize + 1;
+                    const end = Math.min((i + 1) * rangeSize, animeConfig.totalEpisodes);
+                    const option = document.createElement('option');
+                    option.value = `${start}-${end}`;
+                    option.textContent = `${start}-${end}`;
+                    range.appendChild(option);
+                }
+
+                // Set selected range based on episode number
+                const selectedRange = Math.floor((episodeNum - 1) / rangeSize) * rangeSize + 1;
+                range.value = `${selectedRange}-${selectedRange + rangeSize - 1}`;
+            }
+
+            setAppropriateRange(episodeNo);
+            generateEpisodes(1, 100);
+            updateNavigationButtons(episodeNo);
+
+            // Episode range selector
+            document.getElementById('episode-range').addEventListener('change', function () {
+                const range = this.value.split('-');
+                const start = parseInt(range[0]);
+                const end = parseInt(range[1]);
+
+                // Store current episode to preserve it if in the new range
+                const currentEp = episodeNo;
+
+                generateEpisodes(start, end);
+            });
+
+            // Server selection for SUB
+            const subServerButtons = document.querySelectorAll('#sub-hd-1, #sub-hd-2');
+            subServerButtons.forEach((button) => {
+                button.addEventListener('click', function () {
+                    // First deactivate all buttons
+                    document
+                        .querySelectorAll('.server-btn')
+                        .forEach((btn) => btn.classList.remove('active'));
+                    // Then activate this button
+                    this.classList.add('active');
+                });
+            });
+
+            // Server selection for DUB
+            const dubServerButtons = document.querySelectorAll('#dub-hd-1, #dub-hd-2');
+            dubServerButtons.forEach((button) => {
+                button.addEventListener('click', function () {
+                    // First deactivate all buttons
+                    document
+                        .querySelectorAll('.server-btn')
+                        .forEach((btn) => btn.classList.remove('active'));
+                    // Then activate this button
+                    this.classList.add('active');
+                });
+            });
+
+            // Navigation buttons event handlers
+            document.getElementById('prev-episode').addEventListener('click', function () {
+                if (!this.classList.contains('disabled')) {
+                    const currentEp = episodeNo;
+                    changeEpisode(currentEp - 1);
+                }
+            });
+
+            document.getElementById('next-episode').addEventListener('click', function () {
+                if (!this.classList.contains('disabled')) {
+                    const currentEp = episodeNo;
+                    changeEpisode(currentEp + 1);
+                }
+            });
+
+            // Search functionality
+            const searchBar = document.getElementById('search-bar-data');
+            const searchButton = document.getElementById('search-bar-button');
+            const searchUrl = '/search?q=';
+
+            searchButton.addEventListener('click', () => {
+                const query = searchBar.value.trim();
+                redirectToSearch(query);
+            });
+
+            searchBar.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    const query = searchBar.value.trim();
+                    redirectToSearch(query);
+                }
+            });
+
+            function redirectToSearch(query) {
+                if (query !== '') {
+                    window.location.href = searchUrl + query + '&page=1';
+                } else {
+                    searchBar.value = '';
+                }
+            }
+        </script>
+    </body>
+</html>
