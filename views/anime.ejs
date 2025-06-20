@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title><%= title %> - AniXTREME</title>
+        <title><%= name %> - AniXTREME</title>
         <style>
             * {
                 margin: 0;
@@ -574,17 +574,17 @@
         <main class="container">
             <section class="anime-details">
                 <div class="anime-poster-container">
-                    <img src="<%= poster %>" alt="<%= title %> Poster" class="anime-poster" />
+                    <img src="<%= poster %>" alt="<%= name %> Poster" class="anime-poster" />
                 </div>
                 <div class="anime-info">
-                    <h1 class="anime-title"><%= title %></h1>
+                    <h1 class="anime-title"><%= name %></h1>
                     <div class="anime-meta">
                         <div class="meta-item">Type: <span><%= type %></span></div>
-                        <div class="meta-item">Episodes: <span><%= episodes.eps %></span></div>
+                        <div class="meta-item">Episodes: <span><%= episodes.sub %></span></div>
                         <div class="meta-item">Status: <span><%= status %></span></div>
-                        <div class="meta-item">Rating: <span><%= MAL_score %>/10</span></div>
+                        <div class="meta-item">Rating: <span><%= malscore %>/10</span></div>
                     </div>
-                    <p class="anime-description"><%= synopsis %></p>
+                    <p class="anime-description"><%= description %></p>
                     <div class="action-buttons">
                         <a href="/watch/<%= firstEpisodeId %>" class="btn primary-btn">Watch Now</a>
                     </div>
@@ -594,24 +594,23 @@
             <section class="similar-anime">
                 <div class="section-title">
                     <h3>Similar Anime</h3>
-                    <a href="#" class="view-all">View All</a>
                 </div>
                 <div class="anime-list">
                     <% related.forEach(data => { %>
-                    <a href="#" class="anime-card">
+                    <a href="/anime/<%= data.id %>" class="anime-card">
                         <div class="sub-dub">
-                            <% if (data.episodes.sub > 0 && data.episodes.dub === 0) { %> SUB <% }
-                            %> <% if (data.episodes.sub > 0 && data.episodes.dub > 0) { %> SUB/DUB
-                            <% } %>
+                            <% if (data.episodes.sub > 0 && data.episodes.dub <= 0) { %> SUB <% } %>
+                            <% if (data.episodes.sub > 0 && data.episodes.dub > 0) { %> SUB/DUB <% }
+                            %>
                         </div>
-                        <div class="episode-count">EP <%= data.episodes.eps %></div>
+                        <div class="episode-count">EP <%= data.episodes.sub %></div>
                         <img
                             src="<%= data.poster %>"
-                            alt="<%= data.title %>"
+                            alt="<%= data.name %>"
                             class="anime-poster-small"
                         />
                         <div class="anime-card-info">
-                            <div class="anime-card-title"><%= data.title %></div>
+                            <div class="anime-card-title"><%= data.name %></div>
                         </div>
                     </a>
                     <% }) %>

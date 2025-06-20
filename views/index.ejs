@@ -390,7 +390,7 @@
                         In the near future, players of a virtual reality MMORPG called Sword Art
                         Online find themselves trapped in the game world and must fight to escape.
                     </p>
-                    <a href="#" class="watch-btn">Watch Now</a>
+                    <a href="/anime/sword-art-online-2274" class="watch-btn">Watch Now</a>
                 </div>
             </section>
 
@@ -399,18 +399,18 @@
                     <h3>Top Airing</h3>
                 </div>
                 <div class="anime-list">
-                    <% topAiring.forEach(data => { %>
+                    <% topAiringAnimes.forEach(data => { %>
                     <a class="anime-card" href="/anime/<%= data.id %>">
                         <div class="anime-card">
                             <div class="sub-dub">
-                                <% if (data.episodes.sub > 0 && data.episodes.dub === 0) { %> SUB <%
+                                <% if (data.episodes.sub > 0 && data.episodes.dub <= 0) { %> SUB <%
                                 } %> <% if (data.episodes.sub > 0 && data.episodes.dub > 0) { %>
                                 SUB/DUB <% } %>
                             </div>
-                            <div class="episode-count">EP <%= data.episodes.eps %></div>
+                            <div class="episode-count">EP <%= data.episodes.sub %></div>
                             <img src="<%= data.poster %>" alt="Anime Poster" class="anime-poster" />
                             <div class="anime-info">
-                                <div class="anime-title"><%= data.title %></div>
+                                <div class="anime-title"><%= data.name %></div>
                             </div>
                         </div>
                     </a>
@@ -423,18 +423,18 @@
                     <h3>Most Popular</h3>
                 </div>
                 <div class="anime-list">
-                    <% mostPopular.forEach(data => { %>
+                    <% mostPopularAnimes.forEach(data => { %>
                     <a class="anime-card" href="/anime/<%= data.id %>">
                         <div class="anime-card">
                             <div class="sub-dub">
-                                <% if (data.episodes.sub > 0 && data.episodes.dub === 0) { %> SUB <%
+                                <% if (data.episodes.sub > 0 && data.episodes.dub <= 0) { %> SUB <%
                                 } %> <% if (data.episodes.sub > 0 && data.episodes.dub > 0) { %>
                                 SUB/DUB <% } %>
                             </div>
-                            <div class="episode-count">EP <%= data.episodes.eps %></div>
+                            <div class="episode-count">EP <%= data.episodes.sub %></div>
                             <img src="<%= data.poster %>" alt="Anime Poster" class="anime-poster" />
                             <div class="anime-info">
-                                <div class="anime-title"><%= data.title %></div>
+                                <div class="anime-title"><%= data.name %></div>
                             </div>
                         </div>
                     </a>

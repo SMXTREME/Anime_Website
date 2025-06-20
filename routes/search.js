@@ -5,6 +5,7 @@ const searchRoutes = Router();
 searchRoutes.get('/', async (req, res) => {
     const q = req.query?.q;
     const p = req.query?.page;
+
     const response = await getAnimeSearchResult(q, p);
     let results = [];
     let pageInfo = {
@@ -15,9 +16,11 @@ searchRoutes.get('/', async (req, res) => {
     let numberOfResultsFound = 0;
 
     if (response?.data) {
-        results = response.data.response;
-        pageInfo = response.data.pageInfo;
-        numberOfResultsFound = response.data.response.length;
+        results = response.data.animes;
+        pageInfo.currentPage = response.data.currentPage;
+        pageInfo.totalPages = response.data.totalPages;
+        pageInfo.hasNextPage = response.data.hasNextPage;
+        numberOfResultsFound = results.length;
     }
 
     if (numberOfResultsFound === 0) numberOfResultsFound = 'No';

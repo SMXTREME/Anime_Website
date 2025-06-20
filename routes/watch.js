@@ -23,10 +23,14 @@ watchRoutes.get('/:id', async (req, res) => {
                 getAnimeEpisodeVideo(epsId, server, type),
             ]);
 
-        const { title } = detailsResponse.data;
-        const { totalEpisodes, episodes } = episodeListResponse.episodes;
+        const {
+            anime: {
+                info: { name },
+            },
+        } = detailsResponse.data;
+        const { totalEpisodes, episodes } = episodeListResponse.data;
         const { sub, dub, raw, episodeNo } = serverResponse.data;
-        const { sources, tracks } = videoResponse.data;
+        const { sources, tracks, headers } = videoResponse.data;
 
         res.render('watch', {
             totalEpisodes,
@@ -37,7 +41,7 @@ watchRoutes.get('/:id', async (req, res) => {
             episodeNo,
             sources: sources[0].url,
             tracks,
-            title,
+            name,
             epsId,
             server,
             type,

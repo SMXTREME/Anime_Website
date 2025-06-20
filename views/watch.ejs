@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title><%= title %>:Episode <%= episodeNo %> - AniXTREME</title>
+        <title><%= name %>:Episode <%= episodeNo %> - AniXTREME</title>
         <style>
             * {
                 margin: 0;
@@ -373,7 +373,7 @@
 
         <main class="container">
             <section class="video-section">
-                <h1 class="video-title" id="title"><%= title %> - Episode <%= episodeNo %></h1>
+                <h1 class="video-title" id="title"><%= name %> - Episode <%= episodeNo %></h1>
 
                 <div class="video-container">
                     <!-- Video player with HLS support -->
@@ -472,7 +472,7 @@
                 const video = document.getElementById('video-player');
 
                 // Sample HLS stream URL (placeholder)
-                const videoSrc = `<%= sources %>`;
+                let videoSrc = `<%= sources %>`;
 
                 // Check if HLS is supported in the browser
                 if (Hls.isSupported()) {

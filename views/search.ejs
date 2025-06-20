@@ -534,14 +534,14 @@
                     <a class="anime-card" href="/anime/<%= data.id %>">
                         <div class="anime-card">
                             <div class="sub-dub">
-                                <% if (data.episodes.sub > 0 && data.episodes.dub === 0) { %> SUB <%
+                                <% if (data.episodes.sub > 0 && data.episodes.dub <= 0) { %> SUB <%
                                 } %> <% if (data.episodes.sub > 0 && data.episodes.dub > 0) { %>
                                 SUB/DUB <% } %>
                             </div>
-                            <div class="episode-count">EP <%= data.episodes.eps %></div>
+                            <div class="episode-count">EP <%= data.episodes.sub %></div>
                             <img src="<%= data.poster %>" alt="Anime Poster" class="anime-poster" />
                             <div class="anime-info">
-                                <div class="anime-title"><%= data.title %></div>
+                                <div class="anime-title"><%= data.name %></div>
                             </div>
                         </div>
                     </a>

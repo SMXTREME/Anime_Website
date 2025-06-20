@@ -2,6 +2,7 @@ require('dotenv/config');
 const path = require('path');
 const cors = require('cors');
 const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 /**
  * @type {Redis.Redis}
@@ -29,8 +30,55 @@ app.use('/', indexRoutes);
 app.use('/anime', animeRoutes);
 app.use('/watch', watchRoutes);
 app.use('/search', searchRoutes);
+app.get('/test', (req, res) => {
+    res.render('test');
+});
 
-// Error handling
+// app.get('/health', async (req, res) => {
+//     res.json({ test: true });
+// });
+
+const createDynamicProxy = (req, res, next) => {
+    const targetUrl = req.query.targetUrl;
+
+    if (!targetUrl) {
+        return res.status(400).send('targetUrl parameter is required');
+    }
+
+    try {
+        const url = new URL(targetUrl);
+        const baseUrl = `${url.protocol}//${url.host}`;
+
+        const proxy = createProxyMiddleware({
+            target: baseUrl,
+            changeOrigin: true,
+            pathRewrite: () => url.pathname + url.search,
+
+            // Add headers to request (client -> target server)
+            onProxyReq: (proxyReq, req) => {
+                proxyReq.setHeader('X-Forwarded-For', req.connection.remoteAddress);
+                proxyReq.setHeader('X-My-Custom-Header', 'MyCustomValue');
+            },
+
+            // Add/modify headers in response (target server -> client)
+            onProxyRes: (proxyRes) => {
+                proxyRes.headers['Access-Control-Allow-Origin'] = '*';
+                proxyRes.headers['Access-Control-Allow-Methods'] =
+                    'GET, POST, PUT, DELETE, OPTIONS';
+                proxyRes.headers['Access-Control-Allow-Headers'] =
+                    'Origin, X-Requested-With, Content-Type, Accept';
+                proxyRes.headers['X-Reverse-Proxy'] = 'MyCustomReverseProxy';
+            },
+        });
+
+        return proxy(req, res, next);
+    } catch (error) {
+        return res.status(400).send(`Invalid URL: ${error.message}`);
+    }
+};
+
+app.get('/proxy', createDynamicProxy);
+
 app.use((req, res) => {
     res.status(404).render('error', {
         title: 'Not Found',
@@ -48,8 +96,6 @@ app.use((err, req, res, next) => {
 
     console.log(err.message);
 });
-
-// Start server
 app.listen(port, () => {
     console.log(`Anime website running on http://localhost:${port}`);
 });

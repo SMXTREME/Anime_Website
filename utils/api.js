@@ -29,12 +29,12 @@ async function fetchAnimeData(endpoint, api = API_BASE_URL, params = {}) {
  * @returns {import("../types/home").AnimeApiResponse}
  */
 async function getHomeData() {
-    const rdsResult = await redis.get('home');
-    if (rdsResult) return await JSON.parse(rdsResult);
+    // const rdsResult = await redis.get('home');
+    // if (rdsResult) return await JSON.parse(rdsResult);
 
     const results = await fetchAnimeData('home');
 
-    redis.set('home', JSON.stringify(results), 'EX', 86400);
+    // redis.set('home', JSON.stringify(results), 'EX', 86400);
     return results;
 }
 
@@ -44,12 +44,12 @@ async function getHomeData() {
  * @returns {import('../types/animeDetails').AnimeDetailsApiResponse}
  */
 async function getAnimeDetails(id) {
-    const rdsResult = await redis.get(`${id}-AD`);
-    if (rdsResult) return await JSON.parse(rdsResult);
+    // const rdsResult = await redis.get(`${id}-AD`);
+    // if (rdsResult) return await JSON.parse(rdsResult);
 
     const result = await fetchAnimeData(`anime/${id}`);
 
-    redis.set(`${id}-AD`, JSON.stringify(result), 'EX', 3600);
+    // redis.set(`${id}-AD`, JSON.stringify(result), 'EX', 3600);
 
     return result;
 }
@@ -62,42 +62,41 @@ async function getAnimeDetails(id) {
  */
 async function getAnimeSearchResult(q, page) {
     q = q.replace(' ', '+');
-    const result = await fetchAnimeData(`search?keyword=${q}&page=${page}`);
+    const result = await fetchAnimeData(`search?q=${q}&page=${page}`);
     return result;
 }
 
 async function getAnimeEpisodeList(id) {
-    const rdsResult = await redis.get(`${id}-AEL`);
-    if (rdsResult) return await JSON.parse(rdsResult);
+    // const rdsResult = await redis.get(`${id}-AEL`);
+    // if (rdsResult) return await JSON.parse(rdsResult);
 
-    const result = await fetchAnimeData(`episodes/${id}`, API_VIDEO);
+    const result = await fetchAnimeData(`anime/${id}/episodes`);
 
-    redis.set(`${id}-AEL`, JSON.stringify(result), 'EX', 3600);
+    // redis.set(`${id}-AEL`, JSON.stringify(result), 'EX', 3600);
 
     return result;
 }
 
 async function getAnimeEpisodeServer(id) {
-    const rdsResult = await redis.get(`${id}-AES`);
-    if (rdsResult) return await JSON.parse(rdsResult);
+    // const rdsResult = await redis.get(`${id}-AES`);
+    // if (rdsResult) return await JSON.parse(rdsResult);
 
-    const result = await fetchAnimeData(`/servers?episodeId=${id}`, API_VIDEO);
+    const result = await fetchAnimeData(`episode/servers?animeEpisodeId=${id}`);
 
-    redis.set(`${id}-AES`, JSON.stringify(result), 'EX', 3600);
+    // redis.set(`${id}-AES`, JSON.stringify(result), 'EX', 3600);
 
     return result;
 }
 
 async function getAnimeEpisodeVideo(id, server = 'hd-1', dub_sub = 'sub') {
-    const rdsResult = await redis.get(`${id}-AEV`);
-    if (rdsResult) return await JSON.parse(rdsResult);
+    // const rdsResult = await redis.get(`${id}-AEV`);
+    // if (rdsResult) return await JSON.parse(rdsResult);
 
     const result = await fetchAnimeData(
-        `/sources?episodeId=${id}&server=${server}&category=${dub_sub}`,
-        API_VIDEO
+        `episode/sources?animeEpisodeId=${id}?server=${server}&category=${dub_sub}`
     );
 
-    redis.set(`${id}-AEV`, JSON.stringify(result), 'EX', 3600);
+    // redis.set(`${id}-AEV`, JSON.stringify(result), 'EX', 3600);
 
     return result;
 }
