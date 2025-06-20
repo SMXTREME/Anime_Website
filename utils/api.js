@@ -1,5 +1,3 @@
-const redis = require('../redis');
-
 const API_BASE_URL = process.env.API_BASE_URL;
 const API_VIDEO = process.env.API_VIDEO;
 
